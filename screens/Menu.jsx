@@ -42,13 +42,17 @@ const Span = styled.Text`
 const Menu = () => {
   const [speedGame, setSpeed] = useState(CONSTANTS.GAME_SPEED);
   const changeSpeed = () => {
-    setSpeed((speed) => speed + 2000);
+    if(speedGame>=2000){setSpeed((speedGame) => speedGame - 500);}
+    
+    console.log(speedGame);
   };
   const play = () => {
     navigation.navigate('Runner', {speedGame});
   };
   const defaultOption = () => {
     setSpeed(CONSTANTS.GAME_SPEED);
+    console.log(speedGame);
+
   };
   const navigation = useNavigation();
   return (
@@ -66,8 +70,9 @@ const Menu = () => {
       <StyledMenu>Menu</StyledMenu>
       <StyledText onPress={play}>Play</StyledText>
       <StyledText onPress={changeSpeed}>
-        Game speed UP : <Span>{speedGame / 1000}</Span>
+        Game speed UP : <Span>{10- (speedGame / 1000)}</Span>
       </StyledText>
+      <StyledText onPress={defaultOption}>Reset options</StyledText>
     </Space>
   );
 };

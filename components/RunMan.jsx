@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
-import { View,StyleSheet, PanResponder, ImageBackground } from 'react-native';
+import { View,StyleSheet,PanResponder, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { CONSTANTS } from '../constants';
 import SvgMan from './ImageMan';
-
-const bgImage = require('../assets/runner.svg');
-
-
 const RunnerMan = styled(ImageBackground)`
   width: ${CONSTANTS.RUNNER_SIZE.width}px;
   height: ${CONSTANTS.RUNNER_SIZE.height}px;
 `;
 const RunMan = ({ runnerValueChange }) => {
   const [position, setPosition] = useState(CONSTANTS.RUNNER_POSITION);
+  
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onPanResponderMove: (event, gesture) => {
@@ -23,6 +20,7 @@ const RunMan = ({ runnerValueChange }) => {
         });
     },
   });
+
   return (
     <View
       style={[
@@ -31,7 +29,6 @@ const RunMan = ({ runnerValueChange }) => {
       ]}
       {...panResponder.panHandlers}
     >
-
       <SvgMan/>
     </View>
   );
