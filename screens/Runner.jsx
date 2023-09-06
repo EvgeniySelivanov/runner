@@ -40,6 +40,7 @@ const Runner = () => {
   let speed = route.params.speedGame;
   const [isGameRun, setIsGameRun] = useState(false);
   const [sound, setSound] = useState();
+  const [music, setMusic] = useState(false);
   //coordinate runner
   const [rannerPosition, setRannerPosition] = useState(
     CONSTANTS.RUNNER_POSITION
@@ -61,8 +62,7 @@ const Runner = () => {
   const randomPositionStamp = Math.floor(Math.random() * (300 - 1 + 1)) + 1;
   const randomPositionLog = Math.floor(Math.random() * (300 - 1 + 1)) + 1;
 
-
-  //coordinate obtacles 
+  //coordinate obtacles
   let stoneY = stonePosition.y._value;
   let stoneX = stonePosition.x._value;
 
@@ -71,13 +71,12 @@ const Runner = () => {
 
   let logY = logPosition.y._value;
   let logX = logPosition.x._value;
- useEffect(()=>{
-  if(isGameRun){
-    playSound();
-   }
- },[])
- 
 
+  useEffect(() => {
+    if (isGameRun && music) {
+      playSound();
+    }
+  }, [music]);
 
   moveStone = () => {
     Animated.timing(stonePosition, {
@@ -104,16 +103,29 @@ const Runner = () => {
       easing: Easing.linear,
     }).start();
   };
+
   const runnerValueChange = (xPosition) => {
     setRannerPosition((rannerPosition) => ({
       ...rannerPosition,
       x: xPosition,
     }));
   };
-
+  //music
+  async function playSound() {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../assets/music.mp3')
+    );
+    setSound(sound);
+    await sound.playAsync(); // Проигрывание аудио
+  }
+  //stop music
+  const stopMusic = async () => {
+      await sound.stopAsync();
+      setMusic(false);
+  };
   //game over
-  const  gameOver =async () => {
-    await sound.stopAsync();
+  const gameOver = () => {
+    // stopMusic();
     stonePosition.setValue({
       x: randomPositionStone,
       y: CONSTANTS.STONE_POSITION.y,
@@ -130,16 +142,7 @@ const Runner = () => {
     setScore(0);
   };
 
-  async function playSound() {
-    const { sound } = await Audio.Sound.createAsync(
-      require('../assets/music.mp3')
-    );
-    setSound(sound);
-    await sound.playAsync(); // Проигрывание аудио
-  }
   // start game
- 
-
   const startGame = () => {
     stonePosition.setValue({
       x: randomPositionStone,
@@ -159,17 +162,47 @@ const Runner = () => {
     moveLog();
     console.log('game start');
   };
-
+  //add score
   if (logY >= CONSTANTS.SCREEN_HEIGHT + 350) {
     console.log('if run');
     setScore((score) => score + 1);
     startGame();
   }
-
+  //collision check
+/* prettier-ignore */
+  if (
+    (stoneY-150 >= rannerPosition.y &&
+    stoneY-150 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
+    (rannerPosition.x >= stoneX &&
+    rannerPosition.x <= (stoneX + CONSTANTS.STONE_SIZE.width))
+      
+  ) {
+    console.log('gameOver');
+    gameOver();
+  }
+  else if(  (stampY-250 >= rannerPosition.y &&
+    stampY-250 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
+    (rannerPosition.x >= stampX &&
+    rannerPosition.x <= (stampX + CONSTANTS.STONE_SIZE.width))){
+      console.log('gameOver');
+      gameOver();
+    }
+  else if( (logY-450 >= rannerPosition.y &&
+      logY-450 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
+      (rannerPosition.x >= logX &&
+      rannerPosition.x <= (logX + CONSTANTS.STONE_SIZE.width))){
+        console.log('gameOver log');
+        gameOver();
+      }
   return (
     <TouchableWithoutFeedback onPress={startGame}>
       <Space source={bgImage}>
-        <Header gameOver={gameOver} />
+        <Header
+          gameOver={gameOver}
+          setMusic={setMusic}
+          music={music}
+          stopMusic={stopMusic}
+        />
         <Animated.View
           style={[
             { position: 'absolute' },
