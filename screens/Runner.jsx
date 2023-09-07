@@ -170,21 +170,23 @@ const Runner = () => {
   }
   //collision check
 /* prettier-ignore */
+//the digits that are subtracted compensate for the offset along the Y axis
+//see CONSTANTS!!!
   if (
-    (stoneY-150 >= rannerPosition.y &&
-    stoneY-150 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
+    (stoneY >= rannerPosition.y &&
+    stoneY <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
     (rannerPosition.x >= stoneX &&
     rannerPosition.x <= (stoneX + CONSTANTS.STONE_SIZE.width))
       
   ) {
-    console.log('gameOver');
+    console.log('gameOver stone');
     gameOver();
   }
   else if(  (stampY-250 >= rannerPosition.y &&
     stampY-250 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
     (rannerPosition.x >= stampX &&
     rannerPosition.x <= (stampX + CONSTANTS.STONE_SIZE.width))){
-      console.log('gameOver');
+      console.log('gameOver stamp');
       gameOver();
     }
   else if( (logY-450 >= rannerPosition.y &&

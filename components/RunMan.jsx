@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View,StyleSheet,PanResponder, ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { CONSTANTS } from '../constants';
-import SvgMan from './ImageMan';
+import ImageMan from './ImageMan';
 const RunnerMan = styled(ImageBackground)`
   width: ${CONSTANTS.RUNNER_SIZE.width}px;
   height: ${CONSTANTS.RUNNER_SIZE.height}px;
@@ -29,7 +29,7 @@ const RunMan = ({ runnerValueChange }) => {
       ]}
       {...panResponder.panHandlers}
     >
-      <SvgMan/>
+      <ImageMan/>
     </View>
   );
 };

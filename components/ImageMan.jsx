@@ -1,7 +1,6 @@
 import * as React from "react"
 import Svg, { SvgProps, Path, G } from "react-native-svg"
-/* SVGR has dropped some elements not supported by react-native-svg: style */
-const SvgMan = (props: SvgProps) => (
+const ImageMan = (props: SvgProps) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     xmlSpace="preserve"
@@ -274,4 +273,4 @@ const SvgMan = (props: SvgProps) => (
     />
   </Svg>
 )
-export default SvgMan
+export default ImageMan

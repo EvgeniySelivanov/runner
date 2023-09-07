@@ -7,19 +7,13 @@ export const Loading = () => {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'lightgreen',
-        color: 'white',
+        backgroundColor: '#7693e0',
         marginTop:25,
         marginBottom:24
       }}
     >
-      <ActivityIndicator size="large" color="sandybrown" />
-      <Text style={{ marginTop: 15, color: 'sandybrown',fontSize:30 }}>Loading....</Text>
+      <ActivityIndicator size="large" color="white" />
+      <Text style={{ marginTop: 15, color: 'white',fontSize:30 }}>Loading....</Text>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  activityIndicator: {
-    fontSize:30,
-  },
-});
