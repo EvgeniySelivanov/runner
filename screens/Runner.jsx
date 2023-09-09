@@ -17,12 +17,14 @@ import Header from '../components/Header';
 import Stone from '../components/Stone';
 import Stamp from '../components/Stamp';
 import Log from '../components/Log';
+import BackAnimation from '../components/BackAnimation';
 
 const bgImage = require('../assets/bg.png');
 const Space = styled(ImageBackground)`
   flex: 1;
   margin-top: 25px;
   margin-bottom: 25px;
+  overflow: hidden;
 `;
 const ScoreText = styled.Text`
   position: absolute;
@@ -197,7 +199,7 @@ const Runner = () => {
         gameOver();
       }
   return (
-    <TouchableWithoutFeedback onPress={startGame}>
+    <TouchableWithoutFeedback onPress={startGame} >
       <Space source={bgImage}>
         <Header
           gameOver={gameOver}
@@ -205,9 +207,10 @@ const Runner = () => {
           music={music}
           stopMusic={stopMusic}
         />
+        {/* <BackAnimation speed={speed}/> */}
         <Animated.View
           style={[
-            { position: 'absolute' },
+            { position: 'absolute',marginTop:25 },
             { transform: stonePosition.getTranslateTransform() },
           ]}
         >
@@ -218,6 +221,7 @@ const Runner = () => {
           style={[
             {
               position: 'absolute',
+              marginTop:25,
               top: CONSTANTS.STAMP_POSITION.y,
             },
             { transform: stampPosition.getTranslateTransform() },
@@ -229,6 +233,7 @@ const Runner = () => {
           style={[
             {
               position: 'absolute',
+              marginTop:25,
               top: CONSTANTS.LOG_POSITION.y,
             },
             { transform: logPosition.getTranslateTransform() },
