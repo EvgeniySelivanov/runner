@@ -43,6 +43,10 @@ const Runner = () => {
   const [isGameRun, setIsGameRun] = useState(false);
   const [sound, setSound] = useState();
   const [music, setMusic] = useState(false);
+  const [stateAnimationCoordinate,setAnimationCoordinate]=useState(0);
+  // const timer=setInterval(() => {
+  //   setRenderMaker((renderMaker)=>renderMaker+1);
+  // }, 1000);
   //coordinate runner
   const [rannerPosition, setRannerPosition] = useState(
     CONSTANTS.RUNNER_POSITION
@@ -79,7 +83,11 @@ const Runner = () => {
       playSound();
     }
   }, [music]);
-
+useEffect(()=>{
+  stonePosition.y.addListener(({value})=>{
+    setAnimationCoordinate({ currentY: value });
+  })
+},[])
   moveStone = () => {
     Animated.timing(stonePosition, {
       toValue: { x: 0, y: CONSTANTS.SCREEN_HEIGHT + 550 },
@@ -140,6 +148,7 @@ const Runner = () => {
       x: randomPositionLog,
       y: CONSTANTS.LOG_POSITION.y,
     });
+    // clearInterval(timer);
     setIsGameRun(false);
     setScore(0);
   };
