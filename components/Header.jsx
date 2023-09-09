@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import MenuBtn from './MenuBtn';
+import SoundBtn from './SoundBtn';
 const Header = ({ gameOver, setMusic, music,stopMusic }) => {
   const navigation = useNavigation();
   const goToMenu = () => {
@@ -17,14 +19,8 @@ const Header = ({ gameOver, setMusic, music,stopMusic }) => {
   };
   return (
     <View style={styles.bg}>
-      <Text style={styles.text} onPress={goToMenu}>
-        MENU
-      </Text>
-     {music?<Text style={styles.text} onPress={onMusic}>
-        MUSIC ON
-      </Text>:<Text style={styles.text} onPress={onMusic}>
-        MUSIC OFF
-      </Text>} 
+      <MenuBtn onPress={goToMenu} text={"MENU"}/>
+      <SoundBtn onPress={onMusic} music={music} text={"MUSIC"}/>
     </View>
   );
 };
