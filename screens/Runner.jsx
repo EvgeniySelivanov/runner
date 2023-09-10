@@ -17,7 +17,7 @@ import Header from '../components/Header';
 import Stone from '../components/Stone';
 import Stamp from '../components/Stamp';
 import Log from '../components/Log';
-import BackAnimation from '../components/BackAnimation';
+import Decoration from '../components/Decoration';
 
 const bgImage = require('../assets/bg.png');
 const Space = styled(ImageBackground)`
@@ -43,10 +43,9 @@ const Runner = () => {
   const [isGameRun, setIsGameRun] = useState(false);
   const [sound, setSound] = useState();
   const [music, setMusic] = useState(false);
-  const [stateAnimationCoordinate,setAnimationCoordinate]=useState(0);
-  // const timer=setInterval(() => {
-  //   setRenderMaker((renderMaker)=>renderMaker+1);
-  // }, 1000);
+  const [stoneCoordinate,setStoneCoordinate]=useState(0);
+  const [stampCoordinate,setStampCoordinate]=useState(0);
+  
   //coordinate runner
   const [rannerPosition, setRannerPosition] = useState(
     CONSTANTS.RUNNER_POSITION
@@ -85,9 +84,14 @@ const Runner = () => {
   }, [music]);
 useEffect(()=>{
   stonePosition.y.addListener(({value})=>{
-    setAnimationCoordinate({ currentY: value });
+    setStoneCoordinate({ currentY: value });
+  });
+  stampPosition.y.addListener(({value})=>{
+    setStampCoordinate({ currentY: value });
   })
-},[])
+},[]);
+
+
   moveStone = () => {
     Animated.timing(stonePosition, {
       toValue: { x: 0, y: CONSTANTS.SCREEN_HEIGHT + 550 },
@@ -216,7 +220,16 @@ useEffect(()=>{
           music={music}
           stopMusic={stopMusic}
         />
-        {/* <BackAnimation speed={speed}/> */}
+        {isGameRun&&<View>
+          <Decoration speed={speed} imageName="image1" positionY={CONSTANTS.SCREEN_HEIGHT/2} positionX={CONSTANTS.SCREEN_WIDTH/2}/>
+          <Decoration speed={speed} imageName="image7" positionY={CONSTANTS.SCREEN_HEIGHT/3} positionX={CONSTANTS.SCREEN_WIDTH/5}/>
+          <Decoration speed={speed} imageName="image2" positionY={CONSTANTS.SCREEN_HEIGHT/6} positionX={CONSTANTS.SCREEN_WIDTH*0.8}/>
+          <Decoration speed={speed} imageName="image3" positionY={CONSTANTS.SCREEN_HEIGHT/8} positionX={CONSTANTS.SCREEN_WIDTH*0.3}/>
+          <Decoration speed={speed} imageName="image4" positionY={-100} positionX={CONSTANTS.SCREEN_WIDTH*0.1}/>
+          <Decoration speed={speed} imageName="image5" positionY={CONSTANTS.SCREEN_HEIGHT/20} positionX={CONSTANTS.SCREEN_WIDTH*0.7}/>
+          <Decoration speed={speed} imageName="image6" positionY={-200} positionX={CONSTANTS.SCREEN_WIDTH*0.72}/>
+        </View>}
+
         <Animated.View
           style={[
             { position: 'absolute',marginTop:25 },
