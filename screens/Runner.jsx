@@ -139,7 +139,6 @@ useEffect(()=>{
   };
   //game over
   const gameOver = () => {
-    // stopMusic();
     stonePosition.setValue({
       x: randomPositionStone,
       y: CONSTANTS.STONE_POSITION.y,
@@ -152,7 +151,6 @@ useEffect(()=>{
       x: randomPositionLog,
       y: CONSTANTS.LOG_POSITION.y,
     });
-    // clearInterval(timer);
     setIsGameRun(false);
     setScore(0);
   };
