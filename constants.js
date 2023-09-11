@@ -11,5 +11,4 @@ export const CONSTANTS = {
   LOG_POSITION: { x: -30, y:-450 },
   RUNNER_SIZE: { width: 100, height: 86 },
   GAME_SPEED: 10000,
-  DECORATION_LINK:['flower1','flower2']
 };

@@ -19,9 +19,6 @@ import Stamp from '../components/Stamp';
 import Log from '../components/Log';
 import Decoration from '../components/Decoration';
 
-
-
-
 const bgImage = require('../assets/bg2.png');
 const Space = styled(ImageBackground)`
   flex: 1;
@@ -46,9 +43,6 @@ const Runner = () => {
   const [isGameRun, setIsGameRun] = useState(false);
   const [sound, setSound] = useState();
   const [music, setMusic] = useState(false);
-  const [stoneCoordinate,setStoneCoordinate]=useState(0);
-  const [stampCoordinate,setStampCoordinate]=useState(0);
-  
   //coordinate runner
   const [rannerPosition, setRannerPosition] = useState(
     CONSTANTS.RUNNER_POSITION
@@ -70,29 +64,74 @@ const Runner = () => {
   const randomPositionStamp = Math.floor(Math.random() * (300 - 1 + 1)) + 1;
   const randomPositionLog = Math.floor(Math.random() * (300 - 1 + 1)) + 1;
 
-  //coordinate obtacles
-  let stoneY = stonePosition.y._value;
-  let stoneX = stonePosition.x._value;
-
-  let stampY = stampPosition.y._value;
-  let stampX = stampPosition.x._value;
-
-  let logY = logPosition.y._value;
-  let logX = logPosition.x._value;
 
   useEffect(() => {
     if (isGameRun && music) {
       playSound();
     }
   }, [music]);
-useEffect(()=>{
-  stonePosition.y.addListener(({value})=>{
-    setStoneCoordinate({ currentY: value });
-  });
-  stampPosition.y.addListener(({value})=>{
-    setStampCoordinate({ currentY: value });
-  })
-},[]);
+
+  useEffect(() => {
+    stonePosition.addListener((value) => {
+      const xPosition=value.x;
+      const yPosition=value.y;
+      if ((rannerPosition.x >= xPosition && rannerPosition.x <= xPosition + CONSTANTS.STONE_SIZE.width)&&
+          (rannerPosition.y <= yPosition &&
+          rannerPosition.y + CONSTANTS.RUNNER_SIZE.height >= yPosition)
+      ) {
+        gameOver();
+      }
+    });
+    return () => {
+      stonePosition.removeAllListeners();
+    };
+  }, [stonePosition,rannerPosition]);
+
+  useEffect(() => {
+    stampPosition.addListener((value) => {
+      const xPosition=value.x;
+      const yPosition=value.y;
+      if ((rannerPosition.x >= xPosition && rannerPosition.x <= xPosition + CONSTANTS.STONE_SIZE.width)&&
+          (rannerPosition.y <= yPosition-250 &&
+          rannerPosition.y + CONSTANTS.RUNNER_SIZE.height >= yPosition-250)
+      ) {
+        gameOver();
+      }
+    });
+    return () => {
+      stampPosition.removeAllListeners();
+    };
+  }, [stampPosition,rannerPosition]);
+
+
+  useEffect(() => {
+    logPosition.addListener((value) => {
+      const xPosition=value.x;
+      const yPosition=value.y;
+      if ((rannerPosition.x >= xPosition && rannerPosition.x <= (xPosition + CONSTANTS.STONE_SIZE.width))&&
+          (rannerPosition.y <= yPosition-450 &&
+          rannerPosition.y + CONSTANTS.RUNNER_SIZE.height >= yPosition-450))
+       {
+        gameOver();
+      }});
+      return () => {
+        logPosition.removeAllListeners();
+      };
+  }, [logPosition,rannerPosition]);
+
+
+  useEffect(() => {
+    logPosition.y.addListener(({value}) => {
+      const yPosition=value;
+      if(yPosition >= CONSTANTS.SCREEN_HEIGHT + 350){
+        setScore((score) => score + 1);
+        startGame();
+      }
+    });
+    return () => {
+      logPosition.y.removeAllListeners();
+    };
+  }, [logPosition.y,rannerPosition]);
 
 
   moveStone = () => {
@@ -137,27 +176,17 @@ useEffect(()=>{
   }
   //stop music
   const stopMusic = async () => {
-      await sound.stopAsync();
-      setMusic(false);
+    await sound.stopAsync();
+    setMusic(false);
   };
   //game over
   const gameOver = () => {
-    stonePosition.setValue({
-      x: randomPositionStone,
-      y: CONSTANTS.STONE_POSITION.y,
-    });
-    stampPosition.setValue({
-      x: randomPositionStamp,
-      y: CONSTANTS.STAMP_POSITION.y,
-    });
-    logPosition.setValue({
-      x: randomPositionLog,
-      y: CONSTANTS.LOG_POSITION.y,
-    });
+    Animated.timing(stonePosition).stop();
+    Animated.timing(stampPosition).stop();
+    Animated.timing(logPosition).stop();
     setIsGameRun(false);
     setScore(0);
   };
-
   // start game
   const startGame = () => {
     stonePosition.setValue({
@@ -178,42 +207,10 @@ useEffect(()=>{
     moveLog();
     console.log('game start');
   };
-  //add score
-  if (logY >= CONSTANTS.SCREEN_HEIGHT + 350) {
-    console.log('if run');
-    setScore((score) => score + 1);
-    startGame();
-  }
-  //collision check
-/* prettier-ignore */
-//the digits that are subtracted compensate for the offset along the Y axis
-//see CONSTANTS!!!
-  if (
-    (stoneY >= rannerPosition.y &&
-    stoneY <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
-    (rannerPosition.x >= stoneX &&
-    rannerPosition.x <= (stoneX + CONSTANTS.STONE_SIZE.width))
-      
-  ) {
-    console.log('gameOver stone');
-    gameOver();
-  }
-  else if(  (stampY-250 >= rannerPosition.y &&
-    stampY-250 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
-    (rannerPosition.x >= stampX &&
-    rannerPosition.x <= (stampX + CONSTANTS.STONE_SIZE.width))){
-      console.log('gameOver stamp');
-      gameOver();
-    }
-  else if( (logY-450 >= rannerPosition.y &&
-      logY-450 <= (rannerPosition.y + CONSTANTS.RUNNER_SIZE.height)) &&
-      (rannerPosition.x >= logX &&
-      rannerPosition.x <= (logX + CONSTANTS.STONE_SIZE.width))){
-        console.log('gameOver log');
-        gameOver();
-      }
+  
+ 
   return (
-    <TouchableWithoutFeedback onPress={startGame} >
+    <TouchableWithoutFeedback onPress={startGame}>
       <Space source={bgImage}>
         <Header
           gameOver={gameOver}
@@ -221,21 +218,68 @@ useEffect(()=>{
           music={music}
           stopMusic={stopMusic}
         />
-        {isGameRun&&<View>
-          <Decoration speed={speed} imageName="image8" positionY={-400} positionX={0}/>
-          <Decoration speed={speed} imageName="image8" positionY={400} positionX={0}/>
-          <Decoration speed={speed} imageName="image1" positionY={CONSTANTS.SCREEN_HEIGHT/2} positionX={CONSTANTS.SCREEN_WIDTH/2}/>
-          <Decoration speed={speed} imageName="image7" positionY={CONSTANTS.SCREEN_HEIGHT/3} positionX={CONSTANTS.SCREEN_WIDTH/5}/>
-          <Decoration speed={speed} imageName="image2" positionY={CONSTANTS.SCREEN_HEIGHT/6} positionX={CONSTANTS.SCREEN_WIDTH*0.8}/>
-          <Decoration speed={speed} imageName="image3" positionY={CONSTANTS.SCREEN_HEIGHT/8} positionX={CONSTANTS.SCREEN_WIDTH*0.3}/>
-          <Decoration speed={speed} imageName="image4" positionY={-100} positionX={CONSTANTS.SCREEN_WIDTH*0.1}/>
-          <Decoration speed={speed} imageName="image5" positionY={CONSTANTS.SCREEN_HEIGHT/20} positionX={CONSTANTS.SCREEN_WIDTH*0.7}/>
-          <Decoration speed={speed} imageName="image6" positionY={-200} positionX={CONSTANTS.SCREEN_WIDTH*0.72}/>
-        </View>}
+        {isGameRun && (
+          <View>
+            <Decoration
+              speed={speed}
+              imageName="image8"
+              positionY={-400}
+              positionX={0}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image8"
+              positionY={400}
+              positionX={0}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image1"
+              positionY={CONSTANTS.SCREEN_HEIGHT / 2}
+              positionX={CONSTANTS.SCREEN_WIDTH / 2}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image7"
+              positionY={CONSTANTS.SCREEN_HEIGHT / 3}
+              positionX={CONSTANTS.SCREEN_WIDTH / 5}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image2"
+              positionY={CONSTANTS.SCREEN_HEIGHT / 6}
+              positionX={CONSTANTS.SCREEN_WIDTH * 0.8}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image3"
+              positionY={CONSTANTS.SCREEN_HEIGHT / 8}
+              positionX={CONSTANTS.SCREEN_WIDTH * 0.3}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image4"
+              positionY={-100}
+              positionX={CONSTANTS.SCREEN_WIDTH * 0.1}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image5"
+              positionY={CONSTANTS.SCREEN_HEIGHT / 20}
+              positionX={CONSTANTS.SCREEN_WIDTH * 0.7}
+            />
+            <Decoration
+              speed={speed}
+              imageName="image6"
+              positionY={-200}
+              positionX={CONSTANTS.SCREEN_WIDTH * 0.72}
+            />
+          </View>
+        )}
 
         <Animated.View
           style={[
-            { position: 'absolute',marginTop:25 },
+            { position: 'absolute', marginTop: 25 },
             { transform: stonePosition.getTranslateTransform() },
           ]}
         >
@@ -246,7 +290,7 @@ useEffect(()=>{
           style={[
             {
               position: 'absolute',
-              marginTop:25,
+              marginTop: 25,
               top: CONSTANTS.STAMP_POSITION.y,
             },
             { transform: stampPosition.getTranslateTransform() },
@@ -258,7 +302,7 @@ useEffect(()=>{
           style={[
             {
               position: 'absolute',
-              marginTop:25,
+              marginTop: 25,
               top: CONSTANTS.LOG_POSITION.y,
             },
             { transform: logPosition.getTranslateTransform() },
