@@ -18,8 +18,8 @@ import Stone from '../components/Stone';
 import Stamp from '../components/Stamp';
 import Log from '../components/Log';
 import Decoration from '../components/Decoration';
-import Bg1 from '../components/Bg1';
-import Bg2 from '../components/Bg2';
+
+
 
 
 const bgImage = require('../assets/bg2.png');
@@ -222,8 +222,8 @@ useEffect(()=>{
           stopMusic={stopMusic}
         />
         {isGameRun&&<View>
-          <Bg1/>
-          <Bg2/>
+          <Decoration speed={speed} imageName="image8" positionY={-400} positionX={0}/>
+          <Decoration speed={speed} imageName="image8" positionY={400} positionX={0}/>
           <Decoration speed={speed} imageName="image1" positionY={CONSTANTS.SCREEN_HEIGHT/2} positionX={CONSTANTS.SCREEN_WIDTH/2}/>
           <Decoration speed={speed} imageName="image7" positionY={CONSTANTS.SCREEN_HEIGHT/3} positionX={CONSTANTS.SCREEN_WIDTH/5}/>
           <Decoration speed={speed} imageName="image2" positionY={CONSTANTS.SCREEN_HEIGHT/6} positionX={CONSTANTS.SCREEN_WIDTH*0.8}/>

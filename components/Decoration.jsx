@@ -10,6 +10,8 @@ const images = {
   image5: require('../assets/stone1.png'),
   image6: require('../assets/stone2.png'),
   image7: require('../assets/stone3.png'),
+  image8: require('../assets/bg.png'),
+
 };
 const Decoration = ({ speed, positionY, positionX, imageName }) => {
   const [translateY, setTranslateY] = useState(new Animated.Value(0));  
@@ -35,6 +37,7 @@ const Decoration = ({ speed, positionY, positionX, imageName }) => {
         position: 'absolute',
         top: positionY,
         left: positionX,
+        zIndex:0,
         transform: [{ translateY }],
       }}
     />
