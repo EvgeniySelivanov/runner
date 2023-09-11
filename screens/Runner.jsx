@@ -19,7 +19,7 @@ import Stamp from '../components/Stamp';
 import Log from '../components/Log';
 import Decoration from '../components/Decoration';
 
-const bgImage = require('../assets/bg.png');
+const bgImage = require('../assets/bg2.png');
 const Space = styled(ImageBackground)`
   flex: 1;
   margin-top: 25px;
