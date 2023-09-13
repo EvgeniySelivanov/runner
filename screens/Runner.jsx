@@ -37,17 +37,18 @@ const ScoreText = styled.Text`
 
 const Runner = () => {
   const route = useRoute();
-
+let rannerPosition={
+  x:CONSTANTS.RUNNER_POSITION.x,
+  y:CONSTANTS.RUNNER_POSITION.y
+};
+const runnerValueChange = (xPosition) => {
+  rannerPosition.x=xPosition;
+};
   //speed game
   let speed = route.params.speedGame;
   const [isGameRun, setIsGameRun] = useState(false);
   const [sound, setSound] = useState();
   const [music, setMusic] = useState(false);
-  //coordinate runner
-  const [rannerPosition, setRannerPosition] = useState(
-    CONSTANTS.RUNNER_POSITION
-  );
-
   const stonePosition = useRef(
     new Animated.ValueXY(CONSTANTS.STONE_POSITION)
   ).current;
@@ -72,7 +73,8 @@ const Runner = () => {
   }, [music]);
 
   useEffect(() => {
-    stonePosition.addListener((value) => {
+    if(isGameRun){
+      stonePosition.addListener((value) => {
       const xPosition=value.x;
       const yPosition=value.y;
       if ((rannerPosition.x >= xPosition && rannerPosition.x <= xPosition + CONSTANTS.STONE_SIZE.width)&&
@@ -84,11 +86,12 @@ const Runner = () => {
     });
     return () => {
       stonePosition.removeAllListeners();
-    };
+    };}
   }, [stonePosition,rannerPosition]);
 
   useEffect(() => {
-    stampPosition.addListener((value) => {
+    if(isGameRun){
+      stampPosition.addListener((value) => {
       const xPosition=value.x;
       const yPosition=value.y;
       if ((rannerPosition.x >= xPosition && rannerPosition.x <= xPosition + CONSTANTS.STONE_SIZE.width)&&
@@ -100,12 +103,13 @@ const Runner = () => {
     });
     return () => {
       stampPosition.removeAllListeners();
-    };
+    };}
   }, [stampPosition,rannerPosition]);
 
 
   useEffect(() => {
-    logPosition.addListener((value) => {
+    if(isGameRun){
+      logPosition.addListener((value) => {
       const xPosition=value.x;
       const yPosition=value.y;
       if ((rannerPosition.x >= xPosition && rannerPosition.x <= (xPosition + CONSTANTS.STONE_SIZE.width))&&
@@ -116,12 +120,13 @@ const Runner = () => {
       }});
       return () => {
         logPosition.removeAllListeners();
-      };
+      };}
   }, [logPosition,rannerPosition]);
 
 
   useEffect(() => {
-    logPosition.y.addListener(({value}) => {
+    
+      logPosition.y.addListener(({value}) => {
       const yPosition=value;
       if(yPosition >= CONSTANTS.SCREEN_HEIGHT + 350){
         setScore((score) => score + 1);
@@ -131,7 +136,7 @@ const Runner = () => {
     return () => {
       logPosition.y.removeAllListeners();
     };
-  }, [logPosition.y,rannerPosition]);
+  }, [logPosition.y]);
 
 
   moveStone = () => {
@@ -160,12 +165,7 @@ const Runner = () => {
     }).start();
   };
 
-  const runnerValueChange = (xPosition) => {
-    setRannerPosition((rannerPosition) => ({
-      ...rannerPosition,
-      x: xPosition,
-    }));
-  };
+ 
   //music
   async function playSound() {
     const { sound } = await Audio.Sound.createAsync(
@@ -181,6 +181,8 @@ const Runner = () => {
   };
   //game over
   const gameOver = () => {
+    rannerPosition.x=CONSTANTS.RUNNER_POSITION.x;
+    rannerPosition.y=CONSTANTS.RUNNER_POSITION.y;
     Animated.timing(stonePosition).stop();
     Animated.timing(stampPosition).stop();
     Animated.timing(logPosition).stop();
@@ -312,7 +314,7 @@ const Runner = () => {
         </Animated.View>
         <ScoreText>Score:{isGameRun ? score : 0}</ScoreText>
         <StartMessage isGameRun={isGameRun} />
-        <RunMan runnerValueChange={runnerValueChange} />
+        <RunMan runnerValueChange={runnerValueChange}/>
       </Space>
     </TouchableWithoutFeedback>
   );
